@@ -27,6 +27,9 @@ const LoginScreen = (props) => {
 			});
 	};
 
+	let secondTextInput;
+	let thirdTextInput;
+
 	LayoutAnimation.easeInEaseOut();
 
 	return (
@@ -69,6 +72,10 @@ const LoginScreen = (props) => {
 						style={styles.input}
 						autoCapitalize="none"
 						onChangeText={(name) => setName(name)}
+						onSubmitEditing={() => { secondTextInput.focus(); }}
+						blurOnSubmit={false}
+						returnKeyLabel="next"
+						returnKeyType="next"
 						value={name}
 					></TextInput>
 				</View>
@@ -76,9 +83,14 @@ const LoginScreen = (props) => {
 				<View style={styles.field}>
 					<Text style={styles.inputTitle}>Email Address</Text>
 					<TextInput
+						ref={(input) => { secondTextInput = input; }}
 						style={styles.input}
 						autoCapitalize="none"
 						onChangeText={(email) => setEmail(email)}
+						onSubmitEditing={() => { thirdTextInput.focus(); }}
+						blurOnSubmit={false}
+						returnKeyLabel="next"
+						returnKeyType="next"
 						value={email}
 					></TextInput>
 				</View>
@@ -86,10 +98,12 @@ const LoginScreen = (props) => {
 				<View style={styles.field}>
 					<Text style={styles.inputTitle}>Password</Text>
 					<TextInput
+						ref={(input) => { thirdTextInput = input; }}
 						style={styles.input}
 						secureTextEntry
 						autoCapitalize="none"
 						onChangeText={(password) => setPassword(password)}
+						onSubmitEditing={handleSigUp}
 						value={password}
 					></TextInput>
 				</View>

@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -47,21 +47,32 @@ export default (props) => {
 						let iconName;
 						let customSize = size;
 						let customStyle = {};
+						let customColor = color;
 
 						if (route.name === 'Home') {
 							iconName = focused ? 'ios-home' : 'md-home';
 						} else if (route.name === 'Message') {
 							iconName = focused ? 'md-chatboxes' : 'ios-chatboxes';
 						} else if (route.name === 'Post') {
-							iconName = focused ? 'md-add-circle' : 'ios-add-circle-outline';
+							iconName = 'ios-add' ;
 							customSize = 50;
+							customColor = "white";
 							customStyle = {
-								shadowColor: "#E9446A",
-								shadowOffset: { width: 0, height: 2 },
-								shadowOpacity: 0.5,
-								shadowRadius: 2,
-								elevation: 2,
-								color: '#E9446A'
+								//shadowColor: "#E9446A",
+								//shadowOffset: { width: 0, height: 2 },
+								//shadowOpacity: 0.5,
+								//shadowRadius: 2,
+								//elevation: 2,
+								borderRadius: 50 / 2,
+								backgroundColor: '#E9446A',
+								borderRadius: 70/2,
+								borderWidth: 2,
+								borderColor: 'white',
+								height: 70,
+								width: 70,
+								marginTop: -50,
+								alignItems: "center",
+								justifyContent: "center",
 							};
 						} else if (route.name === 'Notification') {
 							iconName = focused ? 'md-notifications' : 'ios-notifications-outline';
@@ -70,7 +81,11 @@ export default (props) => {
 						}
 
 						// You can return any component that you like here!
-						return <Ionicons name={iconName} size={customSize} color={color} style={customStyle} />;
+						return (
+							<View style={customStyle}>
+								<Ionicons name={iconName} size={customSize} color={customColor} />
+							</View>
+						);
 					},
 				})}
 				tabBarOptions={{
@@ -78,6 +93,7 @@ export default (props) => {
 					inactiveTintColor: 'rgba(200,200,200, 0.7)',
 					showLabel: false
 				}}
+
 			>
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Message" component={MessageScreen} />

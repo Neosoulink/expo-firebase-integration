@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, StatusBar, LayoutAnimation } from 'react-native';
 
 import * as firebase from 'firebase';
@@ -19,6 +19,8 @@ const LoginScreen = (props) => {
 				setLoading(false);
 			});
 	};
+
+	let secondTextInput;
 
 	LayoutAnimation.easeInEaseOut();
 
@@ -54,6 +56,10 @@ const LoginScreen = (props) => {
 						style={styles.input}
 						autoCapitalize="none"
 						onChangeText={(email) => setEmail(email)}
+						onSubmitEditing={() => { secondTextInput.focus(); }}
+						blurOnSubmit={false}
+						returnKeyLabel="next"
+						returnKeyType="next"
 						value={email}
 					></TextInput>
 				</View>
@@ -64,7 +70,9 @@ const LoginScreen = (props) => {
 						style={styles.input}
 						secureTextEntry
 						autoCapitalize="none"
+						ref={(input) => { secondTextInput = input; }}
 						onChangeText={(password) => setPassword(password)}
+						onSubmitEditing={handleLogin}
 						value={password}
 					></TextInput>
 				</View>
