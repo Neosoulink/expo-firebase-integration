@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, StatusBar, LayoutAnimation } from 'react-native';
 
 import * as firebase from 'firebase';
 
@@ -20,8 +20,26 @@ const LoginScreen = (props) => {
 			});
 	};
 
+	LayoutAnimation.easeInEaseOut();
+
 	return (
 		<View style={styles.container}>
+			<StatusBar
+				barStyle="light-content"
+				translucent backgroundColor="transparent"
+				showHideTransition="fade">
+			</StatusBar>
+
+			<Image
+				source={require('../assets/authHeader.png')}
+				style={{ marginTop: -146, marginLeft: -56 }}></Image>
+			<Image
+				source={require('../assets/authFooter.png')}
+				style={{ position: "absolute", bottom: -325, right: -225 }}></Image>
+			<Image
+				source={require('../assets/loginLogo.png')}
+				style={{marginTop: -170, alignSelf: "center",  }}></Image>
+
 			<Text style={styles.greeting}>{'Hello again, \nWelcome back'}</Text>
 
 			<View style={styles.errorMessage}>
@@ -55,9 +73,9 @@ const LoginScreen = (props) => {
 					<Text style={{ color: "#fff", fontWeight: "500", }}>Sign In</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }} onPress={() => props.navigation.navigate('Register') }>
+				<TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }} onPress={() => props.navigation.navigate('Register')}>
 					<Text style={{ color: "#414353", fontSize: 13 }}>
-						New to FireR App ? <Text style={{ fontWeight: "500", color: "#E9446A" }}>Sign Up</Text>
+						New to FireR App ? <Text style={{ fontWeight: "800", color: "#E9446A" }}>Sign Up</Text>
 					</Text>
 				</TouchableOpacity>
 			</View>
@@ -73,7 +91,7 @@ const styles = new StyleSheet.create({
 		flex: 1,
 	},
 	greeting: {
-		marginTop: 32,
+		marginTop: -32,
 		fontSize: 18,
 		fontWeight: '400',
 		textAlign: "center",
