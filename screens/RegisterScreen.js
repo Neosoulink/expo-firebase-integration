@@ -1,31 +1,51 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, StatusBar, LayoutAnimation } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
-import * as firebase from 'firebase';
+import Fire from '../utilities/Fire';
+import UserPermission from '../utilities/UserPermission';
 
 const LoginScreen = (props) => {
 
 	const
-		[loading, setLoading] = useState(false),
 		[name, setName] = useState(''),
 		[email, setEmail] = useState(''),
 		[password, setPassword] = useState(''),
+		[avatar, setAvatar] = useState('../assets/imgs/temps/avatar.jpg'),
+		[loading, setLoading] = useState(false),
 		[errorMessage, setErrorMessage] = useState(null);
+
 
 	const handleSigUp = () => {
 		setLoading(true);
-		firebase.auth().createUserWithEmailAndPassword(email, password)
-			.then(userCredential => {
-				return userCredential.user.updateProfile({
-					displayName: name
-				});
-			})
-			.catch(error => setErrorMessage(error.message))
-			.then(() => {
-				setLoading(false);
-			});
+
+		Fire.shared.createUser({ email, password, name, avatar });
+		//firebase.auth().createUserWithEmailAndPassword(email, password)
+		//	.then(userCredential => {
+		//		return userCredential.user.updateProfile({
+		//			displayName: name
+		//		});
+		//	})
+		//	.catch(error => setErrorMessage(error.message))
+		//	.then(() => {
+		//		setLoading(false);
+		//	});
 	};
+
+	const handlePickAvatar = async () => {
+		UserPermission.getCameraPermission()
+
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 4]
+		});
+
+		if (!result.cancelled) {
+			setAvatar(result.uri);
+		}
+	}
 
 	let secondTextInput;
 	let thirdTextInput;
@@ -41,11 +61,11 @@ const LoginScreen = (props) => {
 			</StatusBar>
 
 			<Image
-				source={require('../assets/authHeader.png')}
+				source={require('../assets/imgs/backgrounds/authHeader.png')}
 				style={{ marginTop: -126, marginLeft: -56 }}></Image>
 
 			<Image
-				source={require('../assets/authFooter.png')}
+				source={require('../assets/imgs/backgrounds/authFooter.png')}
 				style={{ position: "absolute", bottom: -325, right: -225 }}></Image>
 
 			<TouchableOpacity style={styles.btnBack} onPress={() => props.navigation.goBack()}>
@@ -55,7 +75,8 @@ const LoginScreen = (props) => {
 			<View style={{ position: "absolute", top: 54, alignItems: "center", width: "100%" }}>
 				<Text style={styles.greeting}>{'Hello, \nSign up to get started'}</Text>
 
-				<TouchableOpacity style={styles.avatar}>
+				<TouchableOpacity style={styles.avatarPlaceholder} onPress={() => handlePickAvatar()}>
+					<Image source={{ uri: avatar }} style={styles.avatar} />
 					<Ionicons name="md-add" size={50} color="white"></Ionicons>
 				</TouchableOpacity>
 			</View>
@@ -109,7 +130,7 @@ const LoginScreen = (props) => {
 				</View>
 
 				<TouchableOpacity style={{ ...styles.button, marginTop: 30 }} onPress={handleSigUp}>
-					<Text style={{ color: "#fff", fontWeight: "500", }}>Sign Un</Text>
+					<Text style={{ color: "#fff", fontWeight: "500", }}>Sign Up</Text>
 				</TouchableOpacity>
 
 				<TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }} onPress={() => props.navigation.navigate('Login')}>
@@ -185,7 +206,7 @@ const styles = new StyleSheet.create({
 		justifyContent: "center",
 		backgroundColor: "rgba(22, 22, 43, 0.1)",
 	},
-	avatar: {
+	avatarPlaceholder: {
 		marginTop: 20,
 		height: 100,
 		width: 100,
@@ -196,6 +217,13 @@ const styles = new StyleSheet.create({
 		alignSelf: "center",
 		alignItems: "center",
 		justifyContent: "center",
+		position: "relative",
+		overflow: "hidden",
+	},
+	avatar: {
+		position: "absolute",
+		height: "100%",
+		width: "100%",
 	},
 
 });

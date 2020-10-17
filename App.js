@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, TouchableOpacity, StyleSheet, YellowBox } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Screens
@@ -29,6 +29,7 @@ const Tab = createBottomTabNavigator();
 firebase.initializeApp(firebaseConfig());
 
 export default (props) => {
+	YellowBox.ignoreWarnings(['Setting a timer']);
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged(user => {
 			user ? setRootGroup("App") : setRootGroup("Auth");
@@ -39,10 +40,11 @@ export default (props) => {
 	const
 		[rootGroup, setRootGroup] = useState(null);
 
-	const authenticatedRoutes = () => {
+	const authenticatedRoutes = (props) => {
 		return (
 			<Tab.Navigator
-				screenOptions={({ route }) => ({
+				initialRouteName="Profile"
+				screenOptions={({ route, navigation }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
 						let customSize = size;
@@ -53,27 +55,6 @@ export default (props) => {
 							iconName = focused ? 'ios-home' : 'md-home';
 						} else if (route.name === 'Message') {
 							iconName = focused ? 'md-chatboxes' : 'ios-chatboxes';
-						} else if (route.name === 'Post') {
-							iconName = 'ios-add' ;
-							customSize = 50;
-							customColor = "white";
-							customStyle = {
-								//shadowColor: "#E9446A",
-								//shadowOffset: { width: 0, height: 2 },
-								//shadowOpacity: 0.5,
-								//shadowRadius: 2,
-								//elevation: 2,
-								borderRadius: 50 / 2,
-								backgroundColor: '#E9446A',
-								borderRadius: 70/2,
-								borderWidth: 2,
-								borderColor: 'white',
-								height: 70,
-								width: 70,
-								marginTop: -50,
-								alignItems: "center",
-								justifyContent: "center",
-							};
 						} else if (route.name === 'Notification') {
 							iconName = focused ? 'md-notifications' : 'ios-notifications-outline';
 						} else if (route.name === 'Profile') {
@@ -91,13 +72,23 @@ export default (props) => {
 				tabBarOptions={{
 					activeTintColor: 'black',
 					inactiveTintColor: 'rgba(200,200,200, 0.7)',
-					showLabel: false
+					showLabel: false,
 				}}
 
 			>
 				<Tab.Screen name="Home" component={HomeScreen} />
 				<Tab.Screen name="Message" component={MessageScreen} />
-				<Tab.Screen name="Post" component={PostScreen} />
+				<Tab.Screen name="Post" component={PostScreen} options={{
+					tabBarButton: () => {
+						return (
+							<TouchableOpacity style={_styles.postBtn} onPress={() => {
+								props.navigation.navigate("PostModal")
+							}}>
+								<Ionicons name='ios-add' size={50} color="white" />
+							</TouchableOpacity>
+						);
+					}
+				}} />
 				<Tab.Screen name="Notification" component={NotificationScreen} />
 				<Tab.Screen name="Profile" component={ProfileScreen} />
 			</Tab.Navigator>
@@ -107,7 +98,10 @@ export default (props) => {
 	const routes = () => {
 		if (rootGroup == "App") {
 			return (
-				<Stack.Screen name="Home" component={authenticatedRoutes} />
+				<>
+					<Stack.Screen name="Home" component={authenticatedRoutes} />
+					<Stack.Screen name="PostModal" component={PostScreen} />
+				</>
 			);
 
 		} else if (rootGroup == "Auth") {
@@ -119,22 +113,35 @@ export default (props) => {
 						options={{
 							headerShown: null
 						}} />
-					<Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: null }} />
+					<Stack.Screen name="Register" component={RegisterScreen} />
 				</>
 			);
 		} else {
 			return (
-				<Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
+				<Stack.Screen name="Loading" component={LoadingScreen} />
 			);
 		}
 	}
 
 	return (
 		<NavigationContainer>
-			<Stack.Navigator>
+			<Stack.Navigator screenOptions={{ headerShown: false }} mode="modal" headerMode="none">
 				{routes()}
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
 }
 
+const _styles = StyleSheet.create({
+	postBtn: {
+		height: 60,
+		width: 60,
+		backgroundColor: '#E9446A',
+		borderRadius: 60 / 2,
+		borderWidth: 1,
+		borderColor: "rgba(0,0,0,0.1)",
+		marginTop: -30,
+		alignItems: "center",
+		justifyContent: "center",
+	}
+});

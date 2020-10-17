@@ -33,13 +33,13 @@ const LoginScreen = (props) => {
 			</StatusBar>
 
 			<Image
-				source={require('../assets/authHeader.png')}
+				source={require('../assets/imgs/backgrounds/authHeader.png')}
 				style={{ marginTop: -146, marginLeft: -56 }}></Image>
 			<Image
-				source={require('../assets/authFooter.png')}
+				source={require('../assets/imgs/backgrounds/authFooter.png')}
 				style={{ position: "absolute", bottom: -325, right: -225 }}></Image>
 			<Image
-				source={require('../assets/loginLogo.png')}
+				source={require('../assets/imgs/backgrounds/loginLogo.png')}
 				style={{marginTop: -170, alignSelf: "center",  }}></Image>
 
 			<Text style={styles.greeting}>{'Hello again, \nWelcome back'}</Text>
