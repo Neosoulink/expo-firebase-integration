@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, StatusBar, LayoutAnimation } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,7 +7,12 @@ import Fire from '../utilities/Fire';
 import UserPermission from '../utilities/UserPermission';
 
 const LoginScreen = (props) => {
-
+	useEffect(() => {
+		return () => {
+			handleSigUp;
+			handlePickAvatar;
+		}
+	}, [handleSigUp, handlePickAvatar])
 	const
 		[name, setName] = useState(''),
 		[email, setEmail] = useState(''),
@@ -20,7 +25,13 @@ const LoginScreen = (props) => {
 	const handleSigUp = () => {
 		setLoading(true);
 
-		Fire.shared.createUser({ email, password, name, avatar });
+		Fire.shared.createUser({ email, password, name, avatar }).then((msg) => {
+			if (typeof msg == "object") {
+				setErrorMessage(msg.message);
+			}
+
+			setLoading(false);
+		});
 		//firebase.auth().createUserWithEmailAndPassword(email, password)
 		//	.then(userCredential => {
 		//		return userCredential.user.updateProfile({

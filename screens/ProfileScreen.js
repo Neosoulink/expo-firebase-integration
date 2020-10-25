@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import * as firebase from 'firebase';
+import * as firebase from "firebase";
 
-const ProfileScreen = () => {
+const ProfileScreen = (props) => {
+	const
+		[currentUser, setCurrentUser] = useState({
+			email: "",
+			displayName: ""
+		});
+
 	useEffect(() => {
 		const { email, displayName } = firebase.auth().currentUser;
 		setCurrentUser({ email, displayName });
 	}, [firebase]);
 
-	const [currentUser, setCurrentUser] = useState({
-		email: "",
-		displayName: ""
-	});
 
 	const signOut = () => {
 		firebase.auth().signOut();
@@ -19,10 +21,11 @@ const ProfileScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.header}>
+			{/*<View style={styles.header}>
 				<Text>Header</Text>
-			</View>
-			<View style={{ flex: 1, alignItems: "center", justifyContent: "center", }}>
+			</View>*/}
+			<View style={{ marginTop: 64, alignItems: "center", }}>
+
 				<Text style={{ marginBottom: 20 }}>{currentUser.email}</Text>
 
 				<TouchableOpacity
@@ -44,5 +47,7 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		paddingTop: 50,
-	}
+	},
+	avatarContainer: {},
+	avatar: {}
 })

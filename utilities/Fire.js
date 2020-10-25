@@ -63,7 +63,7 @@ class Fire {
 		try {
 			await firebase.auth().createUserWithEmailAndPassword(user.email, user.password);
 
-			let db = this.firestore.collection("user").doc(this.uid);
+			let db = this.firestore.collection("users").doc(this.uid);
 
 			db.set({
 				name: user.name,
@@ -77,7 +77,8 @@ class Fire {
 				db.set({ avatar: remoteUri }, { merge: true })
 			}
 		} catch (error) {
-			alert('Error: ', error);
+			return error;
+			alert(error);
 		}
 	}
 
