@@ -43,7 +43,6 @@ export default (props) => {
 	const authenticatedRoutes = (props) => {
 		return (
 			<Tab.Navigator
-				initialRouteName="Profile"
 				screenOptions={({ route, navigation }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;

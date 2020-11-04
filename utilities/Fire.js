@@ -13,20 +13,21 @@ class Fire {
 		const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}.jpg`);
 
 		return new Promise((res, rej) => {
-			this.firestore
-				.collection('posts')
-				.add({
-					text,
-					uid: this.uid,
-					timestamp: this.timestamp,
-					image: remoteUri,
-				})
+			let db = this.firestore.collection("posts").doc(this.uid);
+
+			db.set({
+				text,
+				uid: this.uid,
+				timestamp: this.timestamp,
+				image: remoteUri,
+			})
 				.then(ref => {
 					res(ref);
 				})
 				.catch(error => {
 					rej(error);
-				})
+				});
+
 		})
 	}
 
@@ -80,6 +81,10 @@ class Fire {
 			return error;
 			alert(error);
 		}
+	}
+
+	signOut() {
+		firebase.auth().signOut();
 	}
 
 	get firestore() {

@@ -12,7 +12,7 @@ const LoginScreen = (props) => {
 			handleSigUp;
 			handlePickAvatar;
 		}
-	}, [handleSigUp, handlePickAvatar])
+	}, [])
 	const
 		[name, setName] = useState(''),
 		[email, setEmail] = useState(''),

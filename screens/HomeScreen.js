@@ -3,19 +3,39 @@ import { View, Text, TouchableOpacity, StyleSheet, LayoutAnimation, FlatList, Im
 import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 
-import * as firebase from 'firebase';
+import Fire from '../utilities/Fire';
 
 const renderPost = (props) => {
+	const getPP = async (uid) => {
+		let img = "";
+
+	  await Fire
+			.shared
+			.firestore
+			.collection('users')
+			.doc(uid)
+			.onSnapshot(doc => {
+				img = doc.data();
+
+				console.log(img.avatar)
+				return img.avatar;
+			});
+
+		return img.avatar
+	}
+
 	return (
 		<View style={styles.post}>
 			<View style={{ marginRight: 10, }}>
-				<Image source={props.avatar} style={{ height: 40, width: 40, borderRadius: 20, }} />
+				<Image source={{ uri: '' || console.log(getPP(props.uid).then(() => {
+					console.log("sd")
+				})) }} style={{ height: 40, width: 40, borderRadius: 20, }} />
 			</View>
 
 			<View style={{ flex: 1, }}>
 				<View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15, }}>
 					<View>
-						<Text style={{ fontSize: 17, color: "#454d65", fontWeight: "600" }}>{props.name}</Text>
+						<Text style={{ fontSize: 17, color: "#454d65", fontWeight: "600" }}>{props.uid == Fire.shared.uid ? "@You" : props.name}</Text>
 						<Text style={{ fontSize: 12, color: "#c4c4c4", }}>{moment(props.timestamp).fromNow()}</Text>
 					</View>
 					<TouchableOpacity>
@@ -26,7 +46,7 @@ const renderPost = (props) => {
 				<Text style={{ fontSize: 14, color: "#aaa", marginBottom: 20, }}>{props.text}</Text>
 
 				<View style={{ width: "100%", height: 150 }}>
-					<Image source={props.avatar} style={{ width: "100%", height: "100%", borderRadius: 5 }} />
+					<Image source={{ uri: props.image }} style={{ width: "100%", height: "100%", borderRadius: 5 }} />
 				</View>
 
 				<View style={{ paddingTop: 15, flexDirection: "row" }}>
@@ -46,36 +66,28 @@ const renderPost = (props) => {
 };
 
 export default (props) => {
-	<StatusBar backgroundColor="white" barStyle="dark-content" translucent={true} />
+	const
+		[posts, setPosts] = useState([]);
 
-	const posts = [
-		{
-			id: "1",
-			name: "Jul edward",
-			text: "The group and I will send you a picture of the snake",
-			timestamp: 1602691237069,
-			avatar: require('../assets/imgs/temps/avatar.jpg'),
-			image: require('../assets/imgs/temps/temp-post (1).jpg'),
-		},
-		{
-			id: "2",
-			name: "Loran savant",
-			text: "Jeu de la vie et de ton côté tu as un moment de la partie visible à la place de la vie c'est vraiment passionnant mais il est où le groupe des grands Moulins de la nouvelle application qui s'appelle le respect",
-			timestamp: 1602691164780,
-			avatar: require('../assets/imgs/temps/avatar.jpg'),
-			image: require('../assets/imgs/temps/temp-post (2).jpg'),
-		},
-		{
-			id: "3",
-			name: "Chris Donovan",
-			text: "Hello Kitty, I will be there at cabinet and the group and I will be there at cabinet and the group and I will be there at cabinet and the group and I will be there at cabinet and the snake ☺️",
-			timestamp: 1602691206482,
-			avatar: require('../assets/imgs/temps/avatar.jpg'),
-			image: require('../assets/imgs/temps/temp-post (3).jpg'),
+	useEffect(() => {
+		const user = props.uid || Fire.shared.uid;
+
+		Fire
+			.shared
+			.firestore
+			.collection('posts')
+			.doc(user)
+			.onSnapshot(docs => {
+				//console.log(docs.data())
+				setPosts([docs.data()])
+			});
+
+		return () => {
 		}
+	}, []);
 
-	];
 
+	<StatusBar backgroundColor="white" barStyle="dark-content" translucent={true} />
 	LayoutAnimation.easeInEaseOut();
 
 	return (
@@ -87,7 +99,7 @@ export default (props) => {
 				style={styles.feed}
 				data={posts}
 				renderItem={({ item }) => renderPost(item)}
-				keyExtractor={item => item.id}
+				keyExtractor={item => item.uid + item.timestamp}
 				showsVerticalScrollIndicator={false}
 			/>
 		</View>
